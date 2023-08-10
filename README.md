@@ -11,7 +11,7 @@
 
 ## Install
 
-* Add [SwipeActions.kt](https://github.com/akardas16/SwipeActions/blob/main/app/src/main/java/com/example/swipeactions/SwipeActions.kt) and [SwipeActionModel.kt](https://github.com/akardas16/SwipeActions/blob/main/app/src/main/java/com/example/swipeactions/SwipeActionModel.kt)  files to your project
+* Add [SwipeActions.kt](https://github.com/akardas16/SwipeActions/blob/main/app/src/main/java/com/example/swipeactions/SwipeActions.kt)  file to your project
 
 ## Basic Usage
 
@@ -63,6 +63,6 @@ modifier: Modifier = Modifier,
 
 
 ### Want to see showcase?
-* See `MainActivity.kt`
+* See  [MainActivity.kt](https://github.com/akardas16/SwipeActions/blob/main/app/src/main/java/com/example/swipeactions/MainActivity.kt) for some examples
 
 * Inspired from https://github.com/aheze/SwipeActions
