@@ -73,7 +73,7 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
                       actionTwoImage: ImageVector = Icons.Default.Mail,
                       actionOneBackColor: Color = Color(0x5EA5A3A3),
                       actionTwoBackColor: Color = Color(0x5EA5A3A3),
-
+                      cardBackground:Color = Color(0xFFCACACE),
                       actionOneClicked:() -> Unit = {}, actionTwoClicked:() -> Unit = {},
                       content: @Composable BoxScope.() -> Unit){
 
@@ -193,7 +193,7 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
                 .offset { IntOffset(offsetX.roundToInt(), 0) }
                 .fillMaxSize()
                 .clip(RoundedCornerShape(cornerRadius))
-                .background(Color(0xFFCACACE))
+                .background(cardBackground)
                 .draggable(orientation = Orientation.Horizontal,
                     state = rememberDraggableState { dragAmount ->
                         when {
@@ -223,7 +223,7 @@ fun SwipeActionsLeft(modifier: Modifier = Modifier,
                      actionTwoImage: ImageVector = Icons.Default.Mail,
                      actionOneBackColor: Color = Color(0x5EA5A3A3),
                      actionTwoBackColor: Color = Color(0x5EA5A3A3),
-
+                     cardBackground:Color = Color(0xFFCACACE),
                      actionOneClicked:() -> Unit = {}, actionTwoClicked:() -> Unit = {},
                      content: @Composable BoxScope.() -> Unit,
 ){
@@ -342,7 +342,7 @@ fun SwipeActionsLeft(modifier: Modifier = Modifier,
                 .offset { IntOffset(offsetX.roundToInt(), 0) }
                 .fillMaxSize()
                 .clip(RoundedCornerShape(cornerRadius))
-                .background(Color(0xFFCACACE))
+                .background(cardBackground)
                 .draggable(orientation = Orientation.Horizontal,
                     state = rememberDraggableState { dragAmount ->
                         when {

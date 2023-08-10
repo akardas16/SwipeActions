@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -91,7 +93,15 @@ fun Examples(viewModel: SwipeActionModel = SwipeActionModel()){
 
     // val isExpand by viewModel.isExpand.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier.fillMaxSize(),
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(
+            brush = Brush.linearGradient(
+                arrayListOf(
+                    Color(0xA6FF033E), Color(0xC31389E2), Color(0x8006DB4D)
+                )
+            )
+        ),
         verticalArrangement = Arrangement.SpaceAround, horizontalAlignment = Alignment.CenterHorizontally) {
 
         SwipeActionsRight(modifier = Modifier
@@ -143,8 +153,35 @@ fun Examples(viewModel: SwipeActionModel = SwipeActionModel()){
         SwipeActionsLeft(modifier = Modifier
             .fillMaxWidth(0.95f)
             .height(60.dp),viewModel = viewModel,
-            iconPadding = 16.dp, actionOneImage = Icons.Default.Add,
-            actionOneColor = Color.Black
+            iconPadding = 16.dp, actionOneImage = Icons.Default.WaterDrop,
+            actionOneColor = Color.Black, numberOfActions = 1, cardBackground = Color.White,
+            actionOneBackColor = Color.White
+        ){
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(15.dp),
+                horizontalArrangement = Arrangement.SpaceAround) {
+                Column(modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.SpaceAround) {
+
+
+                    Text(text = "For more options, swipe the card", color = Color.Black,
+                        fontSize = 16.sp,  fontFamily = FontFamily(Font(R.font.lato_regular))
+                    )
+                }
+
+
+
+            }
+        }
+
+        SwipeActionsRight(modifier = Modifier
+            .fillMaxWidth(0.95f)
+            .height(60.dp),viewModel = viewModel,
+            iconPadding = 16.dp, actionOneImage = Icons.Default.Share,
+            actionOneColor = Color.Black, numberOfActions = 1, cardBackground = Color.White,
+            actionOneBackColor = Color.White
         ){
             Row(modifier = Modifier
                 .fillMaxWidth()
