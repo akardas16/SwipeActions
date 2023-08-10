@@ -1,4 +1,4 @@
-# SwipeActions / Jatpack-Compose
+#  Jatpack-Compose / SwipeActions
 
 ## Showcases
 
