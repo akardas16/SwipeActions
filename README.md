@@ -23,7 +23,7 @@ SwipeActionsRight(modifier = Modifier // or SwipeActionsLeft
             .fillMaxWidth(0.95f)
             .height(100.dp), viewModel = viewModel,
             actionOneClicked = {}, actionTwoClicked = {}) {
-            Column(modifier = Modifier.fillMaxHeight(),
+            Column(modifier = Modifier.fillMaxHeight(),  // Your custom UI
                 verticalArrangement = Arrangement.SpaceAround) {
 
 
