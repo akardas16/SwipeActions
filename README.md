@@ -18,6 +18,7 @@
 
 ```Kotlin
 val viewModel: SwipeActionModel = SwipeActionModel()
+//val isExpanded by viewModel.isExpand.collectAsStateWithLifecycle()
 SwipeActionsRight(modifier = Modifier // or SwipeActionsLeft
             .fillMaxWidth(0.95f)
             .height(100.dp), viewModel = viewModel,
