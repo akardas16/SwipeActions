@@ -54,13 +54,34 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.math.roundToInt
 
 enum class Type{
     Icon,Text
 }
 
+class SwipeActionModel: ViewModel() {
+
+    private val _isExpand = MutableStateFlow(false)
+    val isExpand: MutableStateFlow<Boolean> get() = _isExpand
+
+
+
+    fun toggleSwipe(){
+        _isExpand.value = _isExpand.value.not()
+    }
+
+    fun expand(){
+        _isExpand.value = true
+    }
+
+    fun collapse(){
+        _isExpand.value = false
+    }
+}
 
 @Composable
 fun SwipeActionsRight(modifier: Modifier = Modifier,
