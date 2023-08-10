@@ -11,7 +11,7 @@
 
 ## Install
 
-* Add `SwipeActions.kt` and `SwipeActionModel.kt` files to your project
+* Add [SwipeActions.kt](https://github.com/akardas16/SwipeActions/blob/main/app/src/main/java/com/example/swipeactions/SwipeActions.kt) and [SwipeActionModel.kt](https://github.com/akardas16/SwipeActions/blob/main/app/src/main/java/com/example/swipeactions/SwipeActionModel.kt)  files to your project
 
 ## Basic Usage
 
