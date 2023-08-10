@@ -1,6 +1,6 @@
 # SwipeActions-Jatpack-Compose
 
-## Usage
+## Showcases
 
 
 <p align="center">
@@ -9,3 +9,64 @@
  <img  src="https://github.com/akardas16/SwipeActions/assets/28716129/3f21d40f-fcb4-4710-b3af-4605a8997fe3" width="36.3%" >
 </p>
 
+## Install
+
+* Add `SwipeActions.kt` and `SwipeActionModel.kt` files to your project
+
+## Basic Usage
+
+
+```Kotlin
+val viewModel: SwipeActionModel = SwipeActionModel()
+SwipeActionsRight(modifier = Modifier // or SwipeActionsLeft
+            .fillMaxWidth(0.95f)
+            .height(100.dp), viewModel = viewModel,
+            actionOneClicked = {}, actionTwoClicked = {}) {
+            Column(modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceAround) {
+
+
+                Text(text = "For more options, swipe the card", color = Color.Black,
+                    fontSize = 16.sp,  fontFamily = FontFamily(Font(R.font.lato_regular))
+                )
+            }
+        }
+```
+
+*  Toggle / Extend / Collapse 
+
+```Kotlin
+viewModel.toggleSwipe() //switch status
+
+viewModel.expand() //open
+
+viewModel.collapse() //close
+```
+
+*  Available parameters
+
+  ```Kotlin
+modifier: Modifier = Modifier,
+                      viewModel: SwipeActionModel, numberOfActions:Int = 2,
+                      type: Type = Type.Icon, iconPadding: Dp = 29.dp,
+                      cornerRadius: Dp = 24.dp, itemWidth: Dp = 100.dp,
+                      actionOneColor: Color = Color.Red, actionTwoColor: Color = Color.White,
+                      actionOneText: String = "Delete", actionTwoText: String = "Mail",
+                      actionOneImage: ImageVector = Icons.Rounded.Delete,
+                      actionTwoImage: ImageVector = Icons.Default.Mail,
+                      actionOneBackColor: Color = Color(0x5EA5A3A3),
+                      actionTwoBackColor: Color = Color(0x5EA5A3A3),
+                      cardBackground:Color = Color(0xFFCACACE),
+                      actionOneClicked:() -> Unit = {}, actionTwoClicked:() -> Unit = {}
+```
+
+```Kotlin
+viewModel.toggleSwipe() //switch status
+
+viewModel.expand() //open
+
+viewModel.collapse() //close
+```
+
+### Want to see showcase?
+* See `MainActivity.kt`
