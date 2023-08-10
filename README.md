@@ -1,4 +1,4 @@
-# SwipeActions-Jatpack-Compose
+#  Jatpack-Compose / SwipeActions
 
 ## Showcases
 
@@ -11,18 +11,19 @@
 
 ## Install
 
-* Add `SwipeActions.kt` and `SwipeActionModel.kt` files to your project
+* Add [SwipeActions.kt](https://github.com/akardas16/SwipeActions/blob/main/app/src/main/java/com/example/swipeactions/SwipeActions.kt) and [SwipeActionModel.kt](https://github.com/akardas16/SwipeActions/blob/main/app/src/main/java/com/example/swipeactions/SwipeActionModel.kt)  files to your project
 
 ## Basic Usage
 
 
 ```Kotlin
 val viewModel: SwipeActionModel = SwipeActionModel()
+//val isExpanded by viewModel.isExpand.collectAsStateWithLifecycle()
 SwipeActionsRight(modifier = Modifier // or SwipeActionsLeft
             .fillMaxWidth(0.95f)
             .height(100.dp), viewModel = viewModel,
             actionOneClicked = {}, actionTwoClicked = {}) {
-            Column(modifier = Modifier.fillMaxHeight(),
+            Column(modifier = Modifier.fillMaxHeight(),  // Your custom UI
                 verticalArrangement = Arrangement.SpaceAround) {
 
 
