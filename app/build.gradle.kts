@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
@@ -41,7 +40,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -59,8 +58,7 @@ dependencies {
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
-    implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
+    implementation(libs.lifecycle.runtime.compose)
     implementation(libs.material3)
     implementation(libs.androidx.material.icons.extended)
     testImplementation(libs.junit)
