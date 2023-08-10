@@ -64,4 +64,4 @@ modifier: Modifier = Modifier,
 ### Want to see showcase?
 * See `MainActivity.kt`
 
-*Inspired from https://github.com/aheze/SwipeActions
+* Inspired from https://github.com/aheze/SwipeActions
