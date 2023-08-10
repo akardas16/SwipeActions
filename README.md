@@ -60,13 +60,8 @@ modifier: Modifier = Modifier,
                       actionOneClicked:() -> Unit = {}, actionTwoClicked:() -> Unit = {}
 ```
 
-```Kotlin
-viewModel.toggleSwipe() //switch status
-
-viewModel.expand() //open
-
-viewModel.collapse() //close
-```
 
 ### Want to see showcase?
 * See `MainActivity.kt`
+
+*Inspired from https://github.com/aheze/SwipeActions
