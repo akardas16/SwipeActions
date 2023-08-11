@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -63,29 +64,11 @@ enum class Type{
     Icon,Text
 }
 
-class SwipeActionModel: ViewModel() {
-
-    private val _isExpand = MutableStateFlow(false)
-    val isExpand: MutableStateFlow<Boolean> get() = _isExpand
-
-
-
-    fun toggleSwipe(){
-        _isExpand.value = _isExpand.value.not()
-    }
-
-    fun expand(){
-        _isExpand.value = true
-    }
-
-    fun collapse(){
-        _isExpand.value = false
-    }
-}
 
 @Composable
 fun SwipeActionsRight(modifier: Modifier = Modifier,
-                      viewModel: SwipeActionModel, numberOfActions:Int = 2,
+                      isExpanded:Boolean, numberOfActions:Int = 2,
+                      onChangedCard:(isExpanded:Boolean) -> Unit,
                       type: Type = Type.Icon, iconPadding: Dp = 29.dp,
                       cornerRadius: Dp = 24.dp, itemWidth: Dp = 100.dp,
                       actionOneColor: Color = Color.Red, actionTwoColor: Color = Color.White,
@@ -98,12 +81,9 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
                       actionOneClicked:() -> Unit = {}, actionTwoClicked:() -> Unit = {},
                       content: @Composable BoxScope.() -> Unit){
 
-    /*Make sure that you added androidx.lifecycle:lifecycle-runtime-compose dependency
-     for collectAsStateWithLifecycle() or you can use collectAsState() without adding above dependency*/
-    val isExpanded by viewModel.isExpand.collectAsStateWithLifecycle()
 
     var foregroundMaxWidth by remember {
-        mutableStateOf(0f)
+        mutableFloatStateOf(0f)
     }
     val offsetX by animateFloatAsState(targetValue = if(isExpanded) -foregroundMaxWidth else 0f,
         label = "", animationSpec = spring(dampingRatio = 0.68f,
@@ -142,8 +122,8 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
                         .padding(horizontal = 4.dp)
                         .padding(start = 4.dp)
                         .bounceClick {
-                            viewModel.toggleSwipe()
                             actionTwoClicked()
+                            onChangedCard(false)
                         },
                         color = actionTwoBackColor,
                         shape = RoundedCornerShape(cornerRadius)
@@ -178,8 +158,8 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
                     .padding(horizontal = 4.dp)
                     .padding(start = if (numberOfActions == 1) 4.dp else 0.dp)
                     .bounceClick {
-                        viewModel.toggleSwipe()
                         actionOneClicked()
+                        onChangedCard(false)
 
                     },
                     color = actionOneBackColor,
@@ -218,8 +198,8 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
                 .draggable(orientation = Orientation.Horizontal,
                     state = rememberDraggableState { dragAmount ->
                         when {
-                            dragAmount < 6 -> viewModel.expand()
-                            dragAmount >= -6 -> viewModel.collapse()
+                            dragAmount < 6 -> onChangedCard(true)
+                            dragAmount >= -6 -> onChangedCard(false)
 
                         }
                     }),
@@ -235,7 +215,8 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
 
 @Composable
 fun SwipeActionsLeft(modifier: Modifier = Modifier,
-                     viewModel: SwipeActionModel, numberOfActions:Int = 2,
+                     isExpanded:Boolean, onChangedCard:(isExpanded:Boolean) -> Unit,
+                     numberOfActions:Int = 2,
                      type: Type = Type.Icon, iconPadding: Dp = 29.dp,
                      cornerRadius: Dp = 24.dp, itemWidth: Dp = 100.dp,
                      actionOneColor: Color = Color.Red, actionTwoColor: Color = Color.White,
@@ -249,9 +230,8 @@ fun SwipeActionsLeft(modifier: Modifier = Modifier,
                      content: @Composable BoxScope.() -> Unit,
 ){
 
-    val isExpanded by viewModel.isExpand.collectAsStateWithLifecycle()
     var foregroundMaxWidth by remember {
-        mutableStateOf(0f)
+        mutableFloatStateOf(0f)
     }
     val offsetX by animateFloatAsState(targetValue = if(isExpanded) foregroundMaxWidth else 0f,
         label = "", animationSpec = spring(dampingRatio = 0.68f,
@@ -291,9 +271,8 @@ fun SwipeActionsLeft(modifier: Modifier = Modifier,
                         .padding(horizontal = 4.dp)
                         .padding(start = if (numberOfActions == 1) 4.dp else 0.dp)
                         .bounceClick {
-                            viewModel.toggleSwipe()
                             actionTwoClicked()
-
+                            onChangedCard(false)
                         },
                         color = actionTwoBackColor,
                         shape = RoundedCornerShape(cornerRadius)
@@ -326,8 +305,8 @@ fun SwipeActionsLeft(modifier: Modifier = Modifier,
                     .padding(horizontal = 4.dp)
                     .padding(end = 4.dp)
                     .bounceClick {
-                        viewModel.toggleSwipe()
                         actionOneClicked()
+                        onChangedCard(false)
                     },
                     color = actionOneBackColor,
                     shape = RoundedCornerShape(cornerRadius)
@@ -367,8 +346,8 @@ fun SwipeActionsLeft(modifier: Modifier = Modifier,
                 .draggable(orientation = Orientation.Horizontal,
                     state = rememberDraggableState { dragAmount ->
                         when {
-                            dragAmount >= 6 -> viewModel.expand()
-                            dragAmount < -6 -> viewModel.collapse()
+                            dragAmount >= 6 -> onChangedCard(true)
+                            dragAmount < -6 -> onChangedCard(false)
 
                         }
                     }),

@@ -39,6 +39,7 @@ import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -89,26 +90,24 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Examples(viewModel: SwipeActionModel = SwipeActionModel()){
+fun Examples(){
 
-    // val isExpand by viewModel.isExpand.collectAsStateWithLifecycle()
+    var isExpanded by remember {
+        mutableStateOf(false)
+    }
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .background(
-            brush = Brush.linearGradient(
-                arrayListOf(
-                    Color(0xA6FF033E), Color(0xC31389E2), Color(0x8006DB4D)
-                )
-            )
-        ),
+       ,
         verticalArrangement = Arrangement.SpaceAround, horizontalAlignment = Alignment.CenterHorizontally) {
 
         SwipeActionsRight(modifier = Modifier
             .fillMaxWidth(0.95f)
-            .height(100.dp),viewModel = viewModel,numberOfActions = 1,
-            actionOneImage = Icons.Default.Share, actionOneColor = Color(0xFF005EFF)
-        ){
+            .height(100.dp),numberOfActions = 1,
+            isExpanded = isExpanded, onChangedCard = {isExpanded = it },
+            actionOneImage = Icons.Default.Share,
+            actionOneColor = Color(0xFF005EFF)
+           ){
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
@@ -127,7 +126,7 @@ fun Examples(viewModel: SwipeActionModel = SwipeActionModel()){
 
         SwipeActionsRight(modifier = Modifier
             .fillMaxWidth(0.95f)
-            .height(100.dp),viewModel = viewModel){
+            .height(100.dp), isExpanded = isExpanded, onChangedCard = {isExpanded = it }){
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
@@ -152,10 +151,9 @@ fun Examples(viewModel: SwipeActionModel = SwipeActionModel()){
 
         SwipeActionsLeft(modifier = Modifier
             .fillMaxWidth(0.95f)
-            .height(60.dp),viewModel = viewModel,
+            .height(60.dp), isExpanded = isExpanded, onChangedCard = {isExpanded = it },
             iconPadding = 16.dp, actionOneImage = Icons.Default.WaterDrop,
-            actionOneColor = Color.Black, numberOfActions = 1, cardBackground = Color.White,
-            actionOneBackColor = Color.White
+            actionOneColor = Color.Black, numberOfActions = 1
         ){
             Row(modifier = Modifier
                 .fillMaxWidth()
@@ -178,10 +176,9 @@ fun Examples(viewModel: SwipeActionModel = SwipeActionModel()){
 
         SwipeActionsRight(modifier = Modifier
             .fillMaxWidth(0.95f)
-            .height(60.dp),viewModel = viewModel,
+            .height(60.dp), isExpanded = isExpanded, onChangedCard = {isExpanded = it },
             iconPadding = 16.dp, actionOneImage = Icons.Default.Share,
-            actionOneColor = Color.Black, numberOfActions = 1, cardBackground = Color.White,
-            actionOneBackColor = Color.White
+            actionOneColor = Color.Black, numberOfActions = 1
         ){
             Row(modifier = Modifier
                 .fillMaxWidth()
@@ -204,9 +201,8 @@ fun Examples(viewModel: SwipeActionModel = SwipeActionModel()){
 
         SwipeActionsLeft(modifier = Modifier
             .fillMaxWidth(0.95f)
-            .height(60.dp),viewModel = viewModel,
-            iconPadding = 16.dp, actionOneImage = Icons.Default.Add,
-            actionOneColor = Color.White, numberOfActions = 1,
+            .height(60.dp), isExpanded = isExpanded, onChangedCard = {isExpanded = it },
+            iconPadding = 16.dp, actionOneImage = Icons.Default.Add, numberOfActions = 1,
             actionOneBackColor = Color(0xFF0071E9)
         ){
             Row(modifier = Modifier
@@ -230,7 +226,7 @@ fun Examples(viewModel: SwipeActionModel = SwipeActionModel()){
 
         SwipeActionsRight(modifier = Modifier
             .fillMaxWidth(0.95f)
-            .height(100.dp),viewModel = viewModel, type = Type.Text){
+            .height(100.dp), isExpanded = isExpanded, onChangedCard = {isExpanded = it }, type = Type.Text){
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
@@ -257,7 +253,7 @@ fun Examples(viewModel: SwipeActionModel = SwipeActionModel()){
             .fillMaxWidth(0.4f)
             .height(42.dp)
             .bounceClick {
-                viewModel.toggleSwipe()
+                isExpanded = !isExpanded
             }, shape = RoundedCornerShape(50), color = Color.Gray
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally,
@@ -281,8 +277,7 @@ fun Examples(viewModel: SwipeActionModel = SwipeActionModel()){
 fun GreetingPreview() {
     SwipActionsTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            modifier = Modifier.fillMaxSize()
         ) {
             Examples()
         }
