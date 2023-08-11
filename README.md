@@ -17,19 +17,31 @@
 
 
 ```Kotlin
-val viewModel: SwipeActionModel = SwipeActionModel()
-//val isExpanded by viewModel.isExpand.collectAsStateWithLifecycle()
-SwipeActionsRight(modifier = Modifier // or SwipeActionsLeft
+ var isExpanded by remember { mutableStateOf(false) }
+
+ SwipeActionsRight(modifier = Modifier
             .fillMaxWidth(0.95f)
-            .height(100.dp), viewModel = viewModel,
-            actionOneClicked = {}, actionTwoClicked = {}) {
-            Column(modifier = Modifier.fillMaxHeight(),  // Your custom UI
-                verticalArrangement = Arrangement.SpaceAround) {
+            .height(100.dp), 
+            isExpanded = isExpanded, onChangedCard = { isExpanded = it }) {
+            Row(modifier = Modifier  //Your Custom UI
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(15.dp),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Column(modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.SpaceAround) {
+                    Text(
+                        text = "Swipe Actions", color = Color.Black,
+                        fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.lato_bold))
+                    )
 
+                    Text(
+                        text = "For more options, swipe the cardddd", color = Color.Black,
+                        fontSize = 16.sp, fontFamily = FontFamily(Font(R.font.lato_regular))
+                    )
+                }
 
-                Text(text = "For more options, swipe the card", color = Color.Black,
-                    fontSize = 16.sp,  fontFamily = FontFamily(Font(R.font.lato_regular))
-                )
             }
         }
 ```
@@ -37,18 +49,19 @@ SwipeActionsRight(modifier = Modifier // or SwipeActionsLeft
 *  Toggle / Extend / Collapse 
 
 ```Kotlin
-viewModel.toggleSwipe() //switch status
+isExpanded = !isExpanded //switch status
 
-viewModel.expand() //open
+isExpanded = true //open
 
-viewModel.collapse() //close
+isExpanded = false //close
 ```
 
 *  Available parameters
 
   ```Kotlin
 modifier: Modifier = Modifier,
-                      viewModel: SwipeActionModel, numberOfActions:Int = 2,
+                      isExpanded:Boolean, numberOfActions:Int = 2,
+                      onChangedCard:(isExpanded:Boolean) -> Unit,
                       type: Type = Type.Icon, iconPadding: Dp = 29.dp,
                       cornerRadius: Dp = 24.dp, itemWidth: Dp = 100.dp,
                       actionOneColor: Color = Color.Red, actionTwoColor: Color = Color.White,
