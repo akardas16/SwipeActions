@@ -56,6 +56,12 @@ isExpanded = true //open
 isExpanded = false //close
 ```
 
+*  Required Parameters 
+
+```Kotlin
+SwipeActionsRight(isExpanded:Boolean, onChangedCard:(isExpanded:Boolean) -> Unit)
+```
+
 *  Available parameters
 
   ```Kotlin
