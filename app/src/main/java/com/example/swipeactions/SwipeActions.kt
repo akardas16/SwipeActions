@@ -1,5 +1,7 @@
 package com.example.swipeactions
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -41,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -57,7 +61,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 enum class Type{
@@ -65,36 +72,68 @@ enum class Type{
 }
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SwipeActionsRight(modifier: Modifier = Modifier,
-                      isExpanded:Boolean, numberOfActions:Int = 2,
-                      onChangedCard:(isExpanded:Boolean) -> Unit,
-                      type: Type = Type.Icon, iconPadding: Dp = 29.dp,
-                      cornerRadius: Dp = 24.dp, itemWidth: Dp = 100.dp,
-                      actionOneColor: Color = Color.Red, actionTwoColor: Color = Color.White,
-                      actionOneText: String = "Delete", actionTwoText: String = "Mail",
-                      actionOneImage: ImageVector = Icons.Rounded.Delete,
-                      actionTwoImage: ImageVector = Icons.Default.Mail,
-                      actionOneBackColor: Color = Color(0x5EA5A3A3),
-                      actionTwoBackColor: Color = Color(0x5EA5A3A3),
-                      cardBackground:Color = Color(0xFFCACACE),
-                      actionOneClicked:() -> Unit = {}, actionTwoClicked:() -> Unit = {},
-                      content: @Composable BoxScope.() -> Unit){
+                     isExpanded:Boolean, numberOfActions:Int = 2,
+                     onChangedCard:(isExpanded:Boolean) -> Unit,
+                     type: Type = Type.Icon, iconPadding: Dp = 29.dp,
+                     cornerRadius: Dp = 24.dp, itemWidth: Dp = 100.dp,
+                     actionOneColor: Color = Color.Red, actionTwoColor: Color = Color.White,
+                     actionOneText: String = "Delete", actionTwoText: String = "Mail",
+                     actionOneImage: ImageVector = Icons.Rounded.Delete,
+                     actionTwoImage: ImageVector = Icons.Default.Mail,
+                     actionOneBackColor: Color = Color(0x5EA5A3A3),
+                     actionTwoBackColor: Color = Color(0x5EA5A3A3),
+                     cardBackground: Color = Color(0xFFCACACE),
+                     actionOneClicked:() -> Unit = {}, actionTwoClicked:() -> Unit = {},
+                     content: @Composable BoxScope.() -> Unit){
 
 
     var foregroundMaxWidth by remember {
         mutableFloatStateOf(0f)
     }
-    val offsetX by animateFloatAsState(targetValue = if(isExpanded) -foregroundMaxWidth else 0f,
-        label = "", animationSpec = spring(dampingRatio = 0.68f,
-            stiffness = Spring.StiffnessMediumLow)
-    )
+    val offsetX = remember {
+        androidx.compose.animation.core.Animatable(initialValue = 0f)
+    }
+
+
+    LaunchedEffect(key1 = isExpanded) {
+
+        if (isExpanded){
+            coroutineScope  {
+                onChangedCard(true)
+                offsetX.animateTo(
+                    -(foregroundMaxWidth),
+                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                )
+
+            }
+        }else {
+            coroutineScope  {
+                onChangedCard(false)
+                offsetX.animateTo(
+                    0f,
+                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                )
+
+            }
+        }
+    }
+
 
     val size by animateDpAsState(targetValue = if (isExpanded) iconPadding else 50.dp,
         label = "", animationSpec = spring(dampingRatio = 0.68f,
             stiffness = Spring.StiffnessMediumLow)
     )
 
+
+    val coroutineScope = rememberCoroutineScope()
+
+    var dragAmnt by remember {
+        mutableFloatStateOf(0f)
+    }
+    val density = LocalDensity.current
 
 
     Column(modifier = Modifier.fillMaxWidth(),
@@ -108,7 +147,8 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
                 .fillMaxHeight()
                 .background(Color.Transparent)
                 .onSizeChanged {
-                    foregroundMaxWidth = it.width.toFloat()
+                    foregroundMaxWidth = with(density) { it.width.toDp() }.value
+
                 },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End) {
@@ -124,6 +164,7 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
                         .bounceClick {
                             actionTwoClicked()
                             onChangedCard(false)
+
                         },
                         color = actionTwoBackColor,
                         shape = RoundedCornerShape(cornerRadius)
@@ -160,7 +201,6 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
                     .bounceClick {
                         actionOneClicked()
                         onChangedCard(false)
-
                     },
                     color = actionOneBackColor,
                     shape = RoundedCornerShape(cornerRadius)
@@ -191,17 +231,85 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
             }
 
             Box (modifier = Modifier
-                .offset { IntOffset(offsetX.roundToInt(), 0) }
+                .offset(x = offsetX.value.dp)
                 .fillMaxSize()
                 .clip(RoundedCornerShape(cornerRadius))
                 .background(cardBackground)
                 .draggable(orientation = Orientation.Horizontal,
                     state = rememberDraggableState { dragAmount ->
-                        when {
-                            dragAmount < 6 -> onChangedCard(true)
-                            dragAmount >= -6 -> onChangedCard(false)
 
+                        dragAmnt = dragAmount
+
+                        if (offsetX.value.absoluteValue <= foregroundMaxWidth && dragAmount < 0) {
+                            coroutineScope.launch {
+                                offsetX.animateTo(
+                                    offsetX.value + dragAmount,
+                                    animationSpec = spring(
+                                        Spring.DampingRatioMediumBouncy,
+                                        stiffness = Spring.StiffnessLow
+                                    )
+                                )
+                            }
                         }
+
+                        if (offsetX.value <= 0 && dragAmount > 0) {
+                            coroutineScope.launch {
+                                offsetX.animateTo(
+                                    offsetX.value + dragAmount,
+                                    animationSpec = spring(
+                                        Spring.DampingRatioMediumBouncy,
+                                        stiffness = Spring.StiffnessLow
+                                    )
+                                )
+                            }
+                        }
+                        Log.i("sdfsdsdfs", "SwipeActionsTest: ${dragAmount} ")
+                        if (dragAmount <= -12) {
+                            coroutineScope.launch {
+                                onChangedCard(true)
+                                offsetX.animateTo(
+                                    -foregroundMaxWidth,
+                                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                                )
+
+                            }
+                        }
+
+                        if (dragAmount >= 12) {
+                            coroutineScope.launch {
+                                onChangedCard(false)
+                                offsetX.animateTo(
+                                    0f,
+                                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                                )
+
+                            }
+                        }
+
+                    }, onDragStopped = { endedPosition ->
+
+                        if (offsetX.value.absoluteValue >= (foregroundMaxWidth / 2) && dragAmnt.absoluteValue < 12) {
+                            coroutineScope.launch {
+                                onChangedCard(true)
+                                offsetX.animateTo(
+                                    -(foregroundMaxWidth),
+                                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                                )
+
+                            }
+                        }
+
+                        if (offsetX.value.absoluteValue < (foregroundMaxWidth / 2) && dragAmnt.absoluteValue < 12) {
+                            coroutineScope.launch {
+                                onChangedCard(false)
+                                offsetX.animateTo(
+                                    0f,
+                                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                                )
+
+                            }
+                        }
+
                     }),
                 contentAlignment = Alignment.Center){
                 content()
@@ -215,33 +323,67 @@ fun SwipeActionsRight(modifier: Modifier = Modifier,
 
 @Composable
 fun SwipeActionsLeft(modifier: Modifier = Modifier,
-                     isExpanded:Boolean, onChangedCard:(isExpanded:Boolean) -> Unit,
-                     numberOfActions:Int = 2,
-                     type: Type = Type.Icon, iconPadding: Dp = 29.dp,
-                     cornerRadius: Dp = 24.dp, itemWidth: Dp = 100.dp,
-                     actionOneColor: Color = Color.Red, actionTwoColor: Color = Color.White,
-                     actionOneText: String = "Delete", actionTwoText: String = "Mail",
-                     actionOneImage: ImageVector = Icons.Rounded.Delete,
-                     actionTwoImage: ImageVector = Icons.Default.Mail,
-                     actionOneBackColor: Color = Color(0x5EA5A3A3),
-                     actionTwoBackColor: Color = Color(0x5EA5A3A3),
-                     cardBackground:Color = Color(0xFFCACACE),
-                     actionOneClicked:() -> Unit = {}, actionTwoClicked:() -> Unit = {},
-                     content: @Composable BoxScope.() -> Unit,
+                       isExpanded:Boolean, onChangedCard:(isExpanded:Boolean) -> Unit,
+                       numberOfActions:Int = 2,
+                       type: Type = Type.Icon, iconPadding: Dp = 29.dp,
+                       cornerRadius: Dp = 24.dp, itemWidth: Dp = 100.dp,
+                       actionOneColor: Color = Color.Red, actionTwoColor: Color = Color.White,
+                       actionOneText: String = "Delete", actionTwoText: String = "Mail",
+                       actionOneImage: ImageVector = Icons.Rounded.Delete,
+                       actionTwoImage: ImageVector = Icons.Default.Mail,
+                       actionOneBackColor: Color = Color(0x5EA5A3A3),
+                       actionTwoBackColor: Color = Color(0x5EA5A3A3),
+                       cardBackground:Color = Color(0xFFCACACE),
+                       actionOneClicked:() -> Unit = {}, actionTwoClicked:() -> Unit = {},
+                       content: @Composable BoxScope.() -> Unit,
 ){
 
     var foregroundMaxWidth by remember {
         mutableFloatStateOf(0f)
     }
-    val offsetX by animateFloatAsState(targetValue = if(isExpanded) foregroundMaxWidth else 0f,
-        label = "", animationSpec = spring(dampingRatio = 0.68f,
-            stiffness = Spring.StiffnessMediumLow)
-    )
+    val offsetX = remember {
+        androidx.compose.animation.core.Animatable(initialValue = 0f)
+    }
+
+
+    LaunchedEffect(key1 = isExpanded) {
+
+        if (isExpanded){
+            coroutineScope  {
+                onChangedCard(true)
+                offsetX.animateTo(
+                    foregroundMaxWidth,
+                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                )
+
+            }
+        }else {
+            coroutineScope  {
+                onChangedCard(false)
+                offsetX.animateTo(
+                    0f,
+                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                )
+
+            }
+        }
+    }
+
 
     val size by animateDpAsState(targetValue = if (isExpanded) iconPadding else 50.dp,
         label = "", animationSpec = spring(dampingRatio = 0.68f,
             stiffness = Spring.StiffnessMediumLow)
     )
+
+
+    val coroutineScope = rememberCoroutineScope()
+
+    var dragAmnt by remember {
+        mutableFloatStateOf(0f)
+    }
+    val density = LocalDensity.current
+
+
 
 
 
@@ -256,7 +398,7 @@ fun SwipeActionsLeft(modifier: Modifier = Modifier,
                 .fillMaxHeight()
                 .background(Color.Transparent)
                 .onSizeChanged {
-                    foregroundMaxWidth = it.width.toFloat()
+                    foregroundMaxWidth = with(density) { it.width.toDp() }.value
                 },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start) {
@@ -339,17 +481,91 @@ fun SwipeActionsLeft(modifier: Modifier = Modifier,
             }
 
             Box (modifier = Modifier
-                .offset { IntOffset(offsetX.roundToInt(), 0) }
+                .offset(x = offsetX.value.dp)
                 .fillMaxSize()
                 .clip(RoundedCornerShape(cornerRadius))
                 .background(cardBackground)
                 .draggable(orientation = Orientation.Horizontal,
                     state = rememberDraggableState { dragAmount ->
-                        when {
-                            dragAmount >= 6 -> onChangedCard(true)
-                            dragAmount < -6 -> onChangedCard(false)
 
+                        dragAmnt = dragAmount
+
+                        //Open Left
+                        if (offsetX.value.absoluteValue >= 0 && dragAmount > 0) {
+                            coroutineScope.launch {
+                                offsetX.animateTo(
+                                    offsetX.value + dragAmount,
+                                    animationSpec = spring(
+                                        Spring.DampingRatioMediumBouncy,
+                                        stiffness = Spring.StiffnessLow
+                                    )
+                                )
+                            }
                         }
+
+                        //Close
+                        if (offsetX.value <= foregroundMaxWidth && dragAmount < 0) {
+                            coroutineScope.launch {
+                                offsetX.animateTo(
+                                    offsetX.value + dragAmount,
+                                    animationSpec = spring(
+                                        Spring.DampingRatioMediumBouncy,
+                                        stiffness = Spring.StiffnessLow
+                                    )
+                                )
+                            }
+                        }
+                        Log.i("sdfsdsdfs", "SwipeActionsTest: ${dragAmount} ")
+                        //Open
+                        if (dragAmount >= 12) {
+                            coroutineScope.launch {
+                                onChangedCard(true)
+                                offsetX.animateTo(
+                                    foregroundMaxWidth,
+                                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                                )
+
+                            }
+                        }
+
+                        //Close
+                        if (dragAmount <= -12) {
+                            coroutineScope.launch {
+                                onChangedCard(false)
+                                offsetX.animateTo(
+                                    0f,
+                                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                                )
+
+                            }
+                        }
+
+                    }, onDragStopped = { endedPosition ->
+
+                        //Open
+                        if (offsetX.value.absoluteValue >= (foregroundMaxWidth / 2) && dragAmnt.absoluteValue < 12) {
+                            coroutineScope.launch {
+                                onChangedCard(true)
+                                offsetX.animateTo(
+                                    (foregroundMaxWidth),
+                                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                                )
+
+                            }
+                        }
+
+                        //Close
+                        if (offsetX.value.absoluteValue < (foregroundMaxWidth / 2) && dragAmnt.absoluteValue < 12) {
+                            coroutineScope.launch {
+                                onChangedCard(false)
+                                offsetX.animateTo(
+                                    0f,
+                                    animationSpec = spring(0.75f, stiffness = Spring.StiffnessLow)
+                                )
+
+                            }
+                        }
+
                     }),
                 contentAlignment = Alignment.Center){
                 content()

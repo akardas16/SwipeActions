@@ -69,14 +69,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.swipeactions.R
-import com.example.swipeactions.ui.theme.SwipActionsTheme
+import com.example.swipeactions.ui.theme.SwipeActionsTheme
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            SwipActionsTheme {
+            SwipeActionsTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -224,27 +224,30 @@ fun Examples(){
             }
         }
 
+
+
         SwipeActionsRight(modifier = Modifier
             .fillMaxWidth(0.95f)
-            .height(100.dp), isExpanded = isExpanded, onChangedCard = {isExpanded = it }, type = Type.Text){
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .padding(15.dp),
-                horizontalArrangement = Arrangement.SpaceAround) {
+            .height(100.dp), 
+            isExpanded = isExpanded, onChangedCard = { isExpanded = it }) {
+            Row(modifier = Modifier  //Your Custom UI
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(15.dp),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
                 Column(modifier = Modifier.fillMaxHeight(),
                     verticalArrangement = Arrangement.SpaceAround) {
-                    Text(text = "Swipe Actions", color = Color.Black,
-                        fontSize = 18.sp,  fontFamily = FontFamily(Font(R.font.lato_bold))
+                    Text(
+                        text = "Swipe Actions", color = Color.Black,
+                        fontSize = 18.sp, fontFamily = FontFamily(Font(R.font.lato_bold))
                     )
 
-                    Text(text = "For more options, swipe the card", color = Color.Black,
-                        fontSize = 16.sp,  fontFamily = FontFamily(Font(R.font.lato_regular))
+                    Text(
+                        text = "For more options, swipe the cardddd", color = Color.Black,
+                        fontSize = 16.sp, fontFamily = FontFamily(Font(R.font.lato_regular))
                     )
                 }
-
-                Icon(imageVector = Icons.Default.LightMode, contentDescription = null,
-                    modifier = Modifier.fillMaxHeight(), tint = Color.Gray)
 
             }
         }
@@ -275,7 +278,7 @@ fun Examples(){
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    SwipActionsTheme {
+    SwipeActionsTheme {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
